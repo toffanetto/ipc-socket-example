@@ -28,15 +28,25 @@ int main()
     }
 
     // Connect to server
-    if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+    while (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
     {
-        perror("Connection failed");
-        return -1;
+        if (i < 30)
+        {
+            printf("Trying to reconnect...\n");
+            i++;
+            sleep(1);
+        }
+        else
+        {
+            perror("Connection failed");
+            return -1;
+        }
     }
 
+    i = 0;
     while (1)
     {
-        // Sending to server 
+        // Sending to server
         msg.code = i++;
         send(sock, &msg, sizeof(msg), 0);
         printf("Message sent to server\n");

@@ -6,7 +6,7 @@ int main()
     struct sockaddr_in address;
     int addrlen = sizeof(address);
 
-    socket_msg_t *buffer;
+    socket_msg_t buffer;
 
     socket_msg_t msg = {"Hello from server", 1024};
 
@@ -49,8 +49,8 @@ int main()
         }
 
         // Exchange messages
-        read(rx_socket, buffer, sizeof(buffer));
-        printf("Client: %s\n", buffer->msg);
+        read(rx_socket, &buffer, sizeof(buffer));
+        printf("Client: %s\n", buffer.msg);
 
         send(rx_socket, &msg, sizeof(msg), 0);
         printf("msg sent to client\n");

@@ -4,7 +4,7 @@ int main() {
     int sock = 0;
     struct sockaddr_in serv_addr;
 
-    socket_msg_t * buffer;
+    socket_msg_t buffer;
 
     socket_msg_t msg = {"Hello from client", 2048};
 
@@ -33,8 +33,8 @@ int main() {
     send(sock, &msg, sizeof(msg), 0);
     printf("Message sent to server\n");
 
-    read(sock, buffer, sizeof(buffer));
-    printf("Server: %s\n", buffer->msg);
+    read(sock, &buffer, sizeof(buffer));
+    printf("Server: %s\n", buffer.msg);
 
     close(sock);
     return 0;

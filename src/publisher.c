@@ -34,7 +34,7 @@ int main() {
     printf("Message sent to server\n");
 
     read(sock, buffer, sizeof(buffer));
-    printf("Server: %s\n", buffer);
+    printf("Server: %s\n", buffer->msg);
 
     close(sock);
     return 0;

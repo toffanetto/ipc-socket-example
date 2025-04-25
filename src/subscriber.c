@@ -50,7 +50,7 @@ int main()
 
         // Exchange messages
         read(rx_socket, buffer, sizeof(buffer));
-        printf("Client: %s\n", buffer);
+        printf("Client: %s\n", buffer->msg);
 
         send(rx_socket, &msg, sizeof(msg), 0);
         printf("msg sent to client\n");

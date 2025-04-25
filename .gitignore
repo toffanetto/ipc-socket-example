@@ -13,3 +13,6 @@ CMakeUserPresets.json
 publisher
 subscriber
 .vscode/settings.json
+build/
+install/
+log/

@@ -66,25 +66,24 @@ namespace ipc
         // Receiving
         read(rx_socket, &buffer, sizeof(buffer));
         printf("|-Socket received\n");
-        printf("|---Client msg : %s\n", buffer.msg);
-        printf("|---Client code: %d\n", buffer.code);
+        printf("|--Client msg : %s\n", buffer.msg);
+        printf("|--Client code: %d\n\n", buffer.code);
 
         std_msgs::msg::String msg;
         msg.data = std::string(buffer.msg);
-        RCLCPP_INFO(this->get_logger(), "Publishing IPC message | %d", buffer.code);
-        RCLCPP_INFO(this->get_logger(), buffer.msg);
+        // RCLCPP_INFO(this->get_logger(), "Publishing IPC message | %d", buffer.code);
+        // RCLCPP_INFO(this->get_logger(), buffer.msg);
         msg_pub_->publish(msg);
     }
 
     void IpcExample::pub_timer_callback()
     {
-        socket_msg_t msg = {"Hello from server", i++};
-
         // Sending
         if (i < 15)
         {
+            socket_msg_t msg = {"Hello from server", i++};
             send(rx_socket, &msg, sizeof(msg), 0);
-            printf("|-Socket sent\n");
+            printf("|-Socket sent\n\n");
         }
     }
 

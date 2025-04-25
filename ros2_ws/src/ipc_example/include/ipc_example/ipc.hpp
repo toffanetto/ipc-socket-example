@@ -36,12 +36,17 @@ namespace ipc
         struct sockaddr_in address;
         int addrlen;
         socket_msg_t buffer;
-        socket_msg_t msg;
 
-        void msg_timer_callback();
+        int i;
+
+        rclcpp::CallbackGroup::SharedPtr timers_callback_group_;
 
         rclcpp::Publisher<std_msgs::msg::String>::SharedPtr msg_pub_;
-        rclcpp::TimerBase::SharedPtr msg_timer_;
+        rclcpp::TimerBase::SharedPtr sub_timer_;
+        rclcpp::TimerBase::SharedPtr pub_timer_;
+
+        void pub_timer_callback();
+        void sub_timer_callback();
     };
 } // namespace ipc
 #endif // ipc_example__ipc_HPP_

@@ -4,12 +4,20 @@ namespace ipc
 {
     IpcExample::IpcExample() : Node("ipc_example")
     {
+
+        timers_callback_group_ = this->create_callback_group(rclcpp::CallbackGroupType::Reentrant);
+
         msg_pub_ = this->create_publisher<std_msgs::msg::String>("/icp_msg", 1);
-        msg_timer_ = this->create_wall_timer(std::chrono::seconds(1),
-                                             std::bind(&IpcExample::msg_timer_callback, this));
+
+        pub_timer_ = this->create_wall_timer(std::chrono::milliseconds(500),
+                                             std::bind(&IpcExample::pub_timer_callback, this),
+                                             timers_callback_group_);
+
+        sub_timer_ = this->create_wall_timer(std::chrono::seconds(1),
+                                             std::bind(&IpcExample::sub_timer_callback, this),
+                                             timers_callback_group_);
 
         addrlen = sizeof(address);
-        msg = {"Hello from server", 1024};
 
         // Create socket
         if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0)
@@ -37,15 +45,6 @@ namespace ipc
             close(server_fd);
             exit(EXIT_FAILURE);
         }
-    }
-
-    IpcExample::~IpcExample()
-    {
-    }
-
-    void IpcExample::msg_timer_callback()
-    {
-        printf("Waiting for a connection...\n");
 
         // Accept a connection
         if ((rx_socket = accept(server_fd, (struct sockaddr *)&address,
@@ -55,20 +54,38 @@ namespace ipc
             exit(EXIT_FAILURE);
         }
 
+        i = 0;
+    }
+
+    IpcExample::~IpcExample()
+    {
+    }
+
+    void IpcExample::sub_timer_callback()
+    {
         // Receiving
         read(rx_socket, &buffer, sizeof(buffer));
-        printf("Client msg : %s\n", buffer.msg);
-        printf("Client code: %d\n", buffer.code);
-
-        // Sending
-        send(rx_socket, &msg, sizeof(msg), 0);
-        printf("msg sent to client\n");
+        printf("|-Socket received\n");
+        printf("|---Client msg : %s\n", buffer.msg);
+        printf("|---Client code: %d\n", buffer.code);
 
         std_msgs::msg::String msg;
         msg.data = std::string(buffer.msg);
         RCLCPP_INFO(this->get_logger(), "Publishing IPC message | %d", buffer.code);
         RCLCPP_INFO(this->get_logger(), buffer.msg);
         msg_pub_->publish(msg);
+    }
+
+    void IpcExample::pub_timer_callback()
+    {
+        socket_msg_t msg = {"Hello from server", i++};
+
+        // Sending
+        if (i < 15)
+        {
+            send(rx_socket, &msg, sizeof(msg), 0);
+            printf("|-Socket sent\n");
+        }
     }
 
 } // namespace ipc

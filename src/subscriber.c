@@ -6,9 +6,9 @@ int main()
     struct sockaddr_in address;
     int addrlen = sizeof(address);
 
-    char buffer[1024] = {0};
+    socket_msg_t *buffer;
 
-    char msg[128] = "Hello from server";
+    socket_msg_t msg = {"Hello from server", 1024};
 
     // Create socket
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0)
@@ -42,7 +42,7 @@ int main()
         printf("Waiting for a connection...\n");
         // Accept a connection
         if ((rx_socket = accept(server_fd, (struct sockaddr *)&address,
-                                 (socklen_t *)&addrlen)) < 0)
+                                (socklen_t *)&addrlen)) < 0)
         {
             perror("accept failed");
             exit(EXIT_FAILURE);
@@ -52,7 +52,7 @@ int main()
         read(rx_socket, buffer, sizeof(buffer));
         printf("Client: %s\n", buffer);
 
-        send(rx_socket, &msg, strlen(msg), 0);
+        send(rx_socket, &msg, sizeof(msg), 0);
         printf("msg sent to client\n");
     }
 

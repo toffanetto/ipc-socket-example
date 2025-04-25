@@ -10,6 +10,14 @@
 
 #define PORT 8080
 
+#define SERVER_IP "143.106.207.65"
 
-#define SERVER_IP "127.0.0.1"
+typedef struct socket_msg
+{
+    char msg[100];
+    int code;
+} socket_msg_t;
+
+
+
 
